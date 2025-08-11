@@ -31,7 +31,7 @@ public class SpawnManager : MonoBehaviour
 
     void Start()
     {
-       _spawnEnemyRoutine = StartCoroutine(SpawnEnemiesRoutine());
+      _spawnEnemyRoutine = StartCoroutine(SpawnEnemiesRoutine());
     }
 
     IEnumerator SpawnEnemiesRoutine()
@@ -40,7 +40,7 @@ public class SpawnManager : MonoBehaviour
         while(true)
         {
             PoolManager.Instance.RequestEnemy();   
-            yield return new WaitForSeconds(Random.Range(1, 4f));
+            yield return new WaitForSeconds(Random.Range(2, 5f));
         }
        
         _spawnEnemyRoutine = null;

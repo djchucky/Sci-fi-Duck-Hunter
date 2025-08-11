@@ -9,7 +9,6 @@ public class EndPoint : MonoBehaviour
     {
         if(other.CompareTag("Enemy"))
         {
-            Debug.Log("Enemy is inside");
             other.gameObject.SetActive(false);
         }
     }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Waypoint : MonoBehaviour
@@ -8,16 +9,29 @@ public class Waypoint : MonoBehaviour
         get {  return _isOccupied; }
     }
 
+    [SerializeField] private List<AIController> _enemies = new List<AIController>();
+
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy"))
         {
+            _enemies.Add(other.GetComponent<AIController>());
             _isOccupied = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        _isOccupied = false;
+        if(other.CompareTag("Enemy"))
+        {
+            _enemies.Remove(other.GetComponent<AIController>());
+            _isOccupied = false;
+        }
+    }
+
+    public List<AIController> EnemiesReturn() 
+    {
+        return _enemies;
     }
 }
