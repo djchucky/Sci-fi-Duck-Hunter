@@ -155,7 +155,6 @@ public class AIController : MonoBehaviour
         _isHiding = true;
         _agent.isStopped = true;
 
-        Debug.Log("Is hiding is "+  _isHiding);
         yield return new WaitForSeconds(Random.Range(1.5f, 4f));
 
         _isHiding = false;
