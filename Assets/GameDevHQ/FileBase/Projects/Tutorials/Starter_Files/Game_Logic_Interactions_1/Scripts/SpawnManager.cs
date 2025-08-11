@@ -18,11 +18,11 @@ public class SpawnManager : MonoBehaviour
     }
 
     private Coroutine _spawnEnemyRoutine;
-    [SerializeField] private Transform _spawnPosition;
     [SerializeField] private Transform _endPosition;
 
     [Header("Enemy")]
     [SerializeField] private GameObject _enemyPrefab;
+    [SerializeField] private List<Transform> _hidingWaypoints;
 
     private void Awake()
     {
@@ -49,5 +49,10 @@ public class SpawnManager : MonoBehaviour
     public Transform SetEndPosition()
     {
         return _endPosition;
+    }
+
+    public List<Transform> GetHidingWaypoints()
+    {
+        return _hidingWaypoints;
     }
 }
