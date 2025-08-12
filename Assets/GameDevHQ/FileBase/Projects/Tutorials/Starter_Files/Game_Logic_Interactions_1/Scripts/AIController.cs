@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -46,7 +46,6 @@ public class AIController : MonoBehaviour
         {
             _health.OnDead += OnDead;
         }
-
         _isDead = false;
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<AIAnimation>();
@@ -59,8 +58,8 @@ public class AIController : MonoBehaviour
         _lastPosition = transform.position;
         _hidingWaypoints = SpawnManager.Instance.GetHidingWaypoints();
 
-        _agent.SetDestination(_hidingWaypoints[_currentPoint].position);
         _agent.Warp(transform.position); //Set position for NavMeshAgent
+        _agent.SetDestination(_hidingWaypoints[_currentPoint].position);
 
         if (_agent == null)
         {
@@ -69,8 +68,7 @@ public class AIController : MonoBehaviour
     }
 
     private void Update()
-    {
-        
+    {      
         HandleAnimations();
         HandleStatus();
     }
@@ -124,17 +122,19 @@ public class AIController : MonoBehaviour
 
     private void CalculateMovement()
     {
-        if (_isDead) return;
+        if (_isDead || _aiState == AIState.Hide) return;
 
+        // Se il nemico ha raggiunto la destinazione attuale
         if (_agent.remainingDistance < 0.5f && !_agent.pathPending)
         {
+            // Cerca il prossimo waypoint libero
             while (_currentPoint < _hidingWaypoints.Count)
             {
                 Waypoint waypoint = _hidingWaypoints[_currentPoint].GetComponent<Waypoint>();
 
                 if (waypoint != null && waypoint.IsOccupied)
                 {
-                    _currentPoint++;
+                    _currentPoint++;                
                 }
                 else
                 {
@@ -142,6 +142,7 @@ public class AIController : MonoBehaviour
                 }
             }
 
+            // Se non ci sono waypoint liberi → scappa
             if (_currentPoint >= _hidingWaypoints.Count)
             {
                 SetEnemyDestination();
@@ -149,14 +150,18 @@ public class AIController : MonoBehaviour
                 return;
             }
 
-            _agent.SetDestination(_hidingWaypoints[_currentPoint].position);
-
+            //Controlla il waypoint target
             Waypoint targetWaypoint = _hidingWaypoints[_currentPoint].GetComponent<Waypoint>();
-            if (targetWaypoint != null && !targetWaypoint.IsOccupied)
+
+            if (_aiState != AIState.Hide && targetWaypoint != null && !targetWaypoint.IsOccupied && _agent.remainingDistance < 0.5f)
             {
                 _aiState = AIState.Hide;
+                return;
             }
-            else
+
+            _agent.SetDestination(_hidingWaypoints[_currentPoint].position);
+
+            if (targetWaypoint == null)
             {
                 _aiState = AIState.Run;
             }

@@ -18210,7 +18210,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 30.699951, y: 42.599976}
+  m_AnchoredPosition: {x: 30.699951, y: 68.1}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &810526323
@@ -18233,15 +18233,18 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Objective: Kill all enemies before they reach the door
+  m_text: '-Objective: Kill all enemies before they reach the door
 
 
-    Left Mouse
-    - Shoot
+    -3 Hits
+    to kill enemy
 
-    Right Mouse - Zoom
 
-    R - Reload
+    -Left Mouse - Shoot
+
+    -Right Mouse - Zoom
+
+    -R - Reload
 
 '
   m_isRightToLeft: 0
@@ -18306,7 +18309,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -54.053726, y: 0, z: 131.61034, w: 0}
+  m_margin: {x: -54.053726, y: 0, z: 131.61034, w: -32.563858}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -19609,7 +19612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dbb9ced74a551f43b48570395d82839, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxDamage: 1
+  _maxDamage: 3
 --- !u!1001 &846202617
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36292,7 +36295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df2af67441b27424d810d28558dbc0d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemiesToSpawn: 2
+  _enemiesToSpawn: 20
   _endPosition: {fileID: 1252502232}
   _enemyPrefab: {fileID: 4342765993157220630, guid: 3a9bc285698f9b14daa23c73c5e926ac, type: 3}
   _hidingWaypoints:

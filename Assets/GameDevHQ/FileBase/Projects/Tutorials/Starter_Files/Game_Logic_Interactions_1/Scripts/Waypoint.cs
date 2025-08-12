@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Waypoint : MonoBehaviour
@@ -26,7 +28,7 @@ public class Waypoint : MonoBehaviour
         if(other.CompareTag("Enemy"))
         {
             _enemies.Remove(other.GetComponent<AIController>());
-            _isOccupied = false;
+            _isOccupied = _enemies.Count > 0;
         }
     }
 

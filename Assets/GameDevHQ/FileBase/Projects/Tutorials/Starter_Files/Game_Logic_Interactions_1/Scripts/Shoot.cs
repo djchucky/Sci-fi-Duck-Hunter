@@ -45,9 +45,19 @@ public class Shoot : MonoBehaviour
 
     void Update()
     {
+        Shooting();
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ReloadAmmo();
+        }
+    }
+
+    private void Shooting()
+    {
         if (Input.GetKeyDown(KeyCode.Mouse0) && Time.time > _nextFire)
         {
-            if(_currentAmmo > 0)
+            if (_currentAmmo > 0)
             {
                 _currentAmmo--;
                 UIManager.Instance.UpdateAmmoCount(_currentAmmo);
@@ -55,14 +65,7 @@ public class Shoot : MonoBehaviour
                 _ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.5f));
 
                 Fire();
-                if(Physics.Raycast(_ray,out _hitInfo,Mathf.Infinity, 1 << 6 | 1 << 7))
-                {
-                    Health health = _hitInfo.collider.GetComponent<Health>();
-                    if (health != null)
-                    {
-                        health.Damage();
-                    }
-                }
+                Raycast();
             }
 
             else
@@ -71,10 +74,17 @@ public class Shoot : MonoBehaviour
             }
 
         }
+    }
 
-        if(Input.GetKeyDown(KeyCode.R))
+    private void Raycast()
+    {
+        if (Physics.Raycast(_ray, out _hitInfo, Mathf.Infinity, 1 << 6 | 1 << 7))
         {
-            ReloadAmmo();
+            Health health = _hitInfo.collider.GetComponent<Health>();
+            if (health != null)
+            {
+                health.Damage();
+            }
         }
     }
 

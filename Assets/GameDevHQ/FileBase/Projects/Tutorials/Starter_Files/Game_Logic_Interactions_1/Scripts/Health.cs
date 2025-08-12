@@ -33,7 +33,6 @@ public class Health : MonoBehaviour
             _source.clip = _clip;
             _source.Play();
             _currentHealth = _health;
-            Debug.Log("Health is: " + _currentHealth);
             OnDead?.Invoke();
         }
     }
