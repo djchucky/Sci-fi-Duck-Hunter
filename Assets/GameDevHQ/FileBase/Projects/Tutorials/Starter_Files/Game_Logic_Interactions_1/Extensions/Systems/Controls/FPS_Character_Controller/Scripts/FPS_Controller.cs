@@ -23,6 +23,8 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 
         private CharacterController _controller; //reference variable to the character controller component
         private float _yVelocity = 0.0f; //cache our y velocity
+        private bool _isZooming;
+        private float _targetFov;
         
 
         [Header("Headbob Settings")]       
@@ -40,14 +42,22 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         [Header("Camera Settings")]
         [SerializeField][Tooltip("Control the look sensitivty of the camera")]
         private float _lookSensitivity = 5.0f; //mouse sensitivity 
+        [SerializeField]
+        private float _initialFov = 55f;
+        [SerializeField]
+        private float _zoomFov = 18f;
+
+
 
         private Camera _fpsCamera;
         private void Start()
         {
             _controller = GetComponent<CharacterController>(); //assign the reference variable to the component
             _fpsCamera = GetComponentInChildren<Camera>();
+            _targetFov = _initialFov;
             _initialCameraPos = _fpsCamera.transform.localPosition;
             Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         private void Update()
@@ -83,7 +93,7 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
                     _crouching = true;
                     _controller.height = 1.0f;
                 }
-                
+
             }
 
             if (Input.GetKey(KeyCode.LeftShift) && _crouching == false) //check if we are holding down left shift
@@ -113,6 +123,27 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
             velocity = transform.TransformDirection(velocity);
 
             _controller.Move(velocity * Time.deltaTime); //move the controller x meters per second
+
+            ZoomGun();
+        }
+
+        private void ZoomGun()
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse1) && !_isZooming)
+            {
+                Debug.Log("zoom");
+                _isZooming = true;
+                _lookSensitivity = 3f;
+                _targetFov = _zoomFov;
+            }
+            else if (Input.GetKeyDown(KeyCode.Mouse1) && _isZooming)
+            {
+                _isZooming = false;
+                _lookSensitivity = 5f;
+                _targetFov = _initialFov;
+            }
+
+            _fpsCamera.fieldOfView = Mathf.Lerp(_fpsCamera.fieldOfView, _targetFov, 3f * Time.deltaTime);
         }
 
         void CameraController()

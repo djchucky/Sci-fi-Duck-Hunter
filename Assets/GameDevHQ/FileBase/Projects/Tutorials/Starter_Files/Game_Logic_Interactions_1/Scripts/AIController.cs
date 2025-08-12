@@ -15,6 +15,7 @@ public class AIController : MonoBehaviour
 
     private NavMeshAgent _agent;
     private AIAnimation _animator;
+    private Health _health;
 
     private int _currentPoint = 0;
     private bool _isHiding;
@@ -24,6 +25,7 @@ public class AIController : MonoBehaviour
     private Coroutine _hidingRoutine;
     private Coroutine _deathRoutine;
 
+    [SerializeField] private int _points = 20;
     [SerializeField] private AIState _aiState;
     [SerializeField] private List<Transform> _hidingWaypoints;
 
@@ -32,8 +34,19 @@ public class AIController : MonoBehaviour
         Initialization();
     }
 
+    private void OnDisable()
+    {
+        _health.OnDead -= OnDead;
+    }
+
     private void Initialization()
     {
+        _health = GetComponent<Health>();
+        if(_health != null )
+        {
+            _health.OnDead += OnDead;
+        }
+
         _isDead = false;
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<AIAnimation>();
@@ -113,7 +126,7 @@ public class AIController : MonoBehaviour
     {
         if (_isDead) return;
 
-        if (_agent.remainingDistance < 0.3f && !_agent.pathPending)
+        if (_agent.remainingDistance < 0.5f && !_agent.pathPending)
         {
             while (_currentPoint < _hidingWaypoints.Count)
             {
@@ -174,6 +187,10 @@ public class AIController : MonoBehaviour
         _hidingRoutine = null;
     }
 
+    private void OnDead()
+    {
+        Death();
+    }
     private void Death()
     {
         _deathRoutine = StartCoroutine(DeathSequence());   
@@ -181,6 +198,9 @@ public class AIController : MonoBehaviour
 
     IEnumerator DeathSequence()
     {
+        GameManager.Instance.AddScore(_points);
+        UIManager.Instance.UpdateScore();
+        SpawnManager.Instance.ReduceEnemyCount();
         _isDead = true;
         _agent.isStopped = true;
         _aiState = AIState.Death;
@@ -191,4 +211,5 @@ public class AIController : MonoBehaviour
         gameObject.SetActive(false);
         _deathRoutine = null;
     }
+
 }

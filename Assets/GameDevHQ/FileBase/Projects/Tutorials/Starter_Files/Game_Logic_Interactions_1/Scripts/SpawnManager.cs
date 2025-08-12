@@ -19,6 +19,8 @@ public class SpawnManager : MonoBehaviour
 
     private Coroutine _spawnEnemyRoutine;
     [SerializeField] private Transform _endPosition;
+    [SerializeField] private int _enemiesToSpawn = 5;
+    private int _enemiesLeft;
 
     [Header("Enemy")]
     [SerializeField] private GameObject _enemyPrefab;
@@ -26,23 +28,28 @@ public class SpawnManager : MonoBehaviour
 
     private void Awake()
     {
+
         _instance = this;
+        
     }
 
     void Start()
     {
-      _spawnEnemyRoutine = StartCoroutine(SpawnEnemiesRoutine());
+        _enemiesLeft = _enemiesToSpawn;
+        UIManager.Instance.UpdateEnemiesLeft(_enemiesLeft);
+        _spawnEnemyRoutine = StartCoroutine(SpawnEnemiesRoutine());
     }
 
     IEnumerator SpawnEnemiesRoutine()
     {
         yield return null;
-        while(true)
+
+        for (int i = 0; i < _enemiesToSpawn; i++)
         {
             PoolManager.Instance.RequestEnemy();   
             yield return new WaitForSeconds(Random.Range(2, 5f));
+            
         }
-       
         _spawnEnemyRoutine = null;
     }
 
@@ -54,5 +61,15 @@ public class SpawnManager : MonoBehaviour
     public List<Transform> GetHidingWaypoints()
     {
         return _hidingWaypoints;
+    }
+
+    public void ReduceEnemyCount()
+    {
+        _enemiesLeft--;
+        UIManager.Instance.UpdateEnemiesLeft(_enemiesLeft);
+        if(_enemiesLeft <= 0)
+        {
+            Debug.Log("You Win!");
+        }
     }
 }
