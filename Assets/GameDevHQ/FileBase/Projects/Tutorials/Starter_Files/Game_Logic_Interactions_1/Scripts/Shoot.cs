@@ -20,6 +20,18 @@ public class Shoot : MonoBehaviour
 
     [SerializeField] Camera _camera;
 
+    private void OnEnable()
+    {
+        GameManager.OnGameOver += OnGameOver;
+        SpawnManager.OnWinGame += WinGame;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnGameOver -= OnGameOver;
+        SpawnManager.OnWinGame -= WinGame;
+    }
+
     void Start()
     {
         _currentAmmo = _maxAmmo;
@@ -96,5 +108,15 @@ public class Shoot : MonoBehaviour
         _currentAmmo = _maxAmmo;
         UIManager.Instance.UpdateAmmoCount(_currentAmmo);
         _reloadRoutine = null;
+    }
+
+    private void OnGameOver()
+    {
+        this.enabled = false;
+    }
+
+    private void WinGame()
+    {
+        this.enabled = false;
     }
 }

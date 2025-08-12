@@ -47,7 +47,17 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
         [SerializeField]
         private float _zoomFov = 18f;
 
+        private void OnEnable()
+        {
+            GameManager.OnGameOver += OnGameOver;
+            SpawnManager.OnWinGame += WinGame;
+        }
 
+        private void OnDisable()
+        {
+            GameManager.OnGameOver -= OnGameOver;
+            SpawnManager.OnWinGame -= WinGame;
+        }
 
         private Camera _fpsCamera;
         private void Start()
@@ -204,6 +214,16 @@ namespace GameDevHQ.FileBase.Plugins.FPS_Character_Controller
 
                 _fpsCamera.transform.localPosition = resetHead; //assign the head position back to the initial cam pos
             }
+        }
+
+        private void WinGame()
+        {
+            this.enabled = false;
+        }
+
+        private void OnGameOver()
+        {
+            this.enabled = false;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,10 +18,12 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
+    public static Action OnWinGame;
     private Coroutine _spawnEnemyRoutine;
-    [SerializeField] private Transform _endPosition;
-    [SerializeField] private int _enemiesToSpawn = 5;
     private int _enemiesLeft;
+
+    [SerializeField] private int _enemiesToSpawn = 5;
+    [SerializeField] private Transform _endPosition;
 
     [Header("Enemy")]
     [SerializeField] private GameObject _enemyPrefab;
@@ -60,9 +63,10 @@ public class SpawnManager : MonoBehaviour
                 }
 
                 PoolManager.Instance.RequestEnemy();   
-                yield return new WaitForSeconds(Random.Range(2, 5f));
-            
+                yield return new WaitForSeconds(UnityEngine.Random.Range(2, 5f));             
             }
+
+            yield break;
         }
         Debug.Log("End Spawn");
         _spawnEnemyRoutine = null;
@@ -84,7 +88,12 @@ public class SpawnManager : MonoBehaviour
         UIManager.Instance.UpdateEnemiesLeft(_enemiesLeft);
         if(_enemiesLeft <= 0)
         {
-            Debug.Log("You Win!");
+            if(OnWinGame != null)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
+                OnWinGame?.Invoke();
+            }
         }
     }
 
@@ -92,7 +101,6 @@ public class SpawnManager : MonoBehaviour
     {
         if(_spawnEnemyRoutine != null)
         {
-            Debug.Log("Stop Spawning");
             StopCoroutine(_spawnEnemyRoutine);
             _spawnEnemyRoutine = null;
         }

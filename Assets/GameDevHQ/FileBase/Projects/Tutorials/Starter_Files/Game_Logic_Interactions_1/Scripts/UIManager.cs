@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    [Header("UI Settings")]
     [SerializeField]
     private TextMeshProUGUI _currentAmmoText;
     [SerializeField]
@@ -26,15 +27,23 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI _enemiesLeft;
     [SerializeField]
     private TextMeshProUGUI _damageReceived;
+    [SerializeField]
+    private GameObject _gameOverPanel;
+    [SerializeField]
+    private GameObject _winPanel;
+    [SerializeField]
+    private GameObject _crossHair;
 
     private void OnEnable()
     {
         GameManager.OnGameOver += OnGameOver;
+        SpawnManager.OnWinGame += OnWin;
     }
 
     private void OnDisable()
     {
         GameManager.OnGameOver -= OnGameOver;
+        SpawnManager.OnWinGame -= OnWin;
     }
 
     private void Awake()
@@ -65,8 +74,14 @@ public class UIManager : MonoBehaviour
 
     private void OnGameOver()
     {
-        //Activate button restart
-        //Acttivate Game Over screen
+        _gameOverPanel.SetActive(true);
+        _crossHair.SetActive(false);
+    }
+
+    private void OnWin()
+    {
+        _winPanel.SetActive(true);
+        _crossHair.SetActive(false);
     }
 
 }

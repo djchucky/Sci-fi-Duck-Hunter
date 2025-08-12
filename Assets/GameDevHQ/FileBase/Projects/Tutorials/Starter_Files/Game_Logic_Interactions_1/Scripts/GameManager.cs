@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     private int _damageReceived;
     private bool _isGameOver;
     public static Action OnGameOver;
+    
 
     public bool IsGameOver
     {
@@ -60,7 +61,11 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("You lose");
             _isGameOver = true;
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
             OnGameOver?.Invoke();
         }
     }
+
+
 }
