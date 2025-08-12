@@ -5,8 +5,12 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] private int _health = 2;
-    [SerializeField] private AudioClip _clip;
+    [SerializeField] 
+    private int _health = 2;
+    [SerializeField]
+    private int _currentHealth;
+    [SerializeField] 
+    private AudioClip _clip;
     private AudioSource _source;
 
     public Action OnDead;
@@ -18,15 +22,18 @@ public class Health : MonoBehaviour
         {
             Debug.LogError("Audiosource is NULL on ENEMY");
         }
+        _currentHealth = _health;
     }
 
     public void Damage()
     {
-        _health--;
-        if(_health <= 0)
+        _currentHealth--;
+        if(_currentHealth <= 0)
         {
             _source.clip = _clip;
             _source.Play();
+            _currentHealth = _health;
+            Debug.Log("Health is: " + _currentHealth);
             OnDead?.Invoke();
         }
     }

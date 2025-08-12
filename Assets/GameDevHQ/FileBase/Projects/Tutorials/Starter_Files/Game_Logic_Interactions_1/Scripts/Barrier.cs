@@ -6,6 +6,7 @@ public class Barrier : MonoBehaviour
 {
     private Health _health;
     private AudioSource _audioSource;
+    private Coroutine _barrierRoutine;
 
     private void OnEnable()
     {
@@ -18,20 +19,39 @@ public class Barrier : MonoBehaviour
 
         if (_health != null)
         {
-            _health.OnDead += OnDeath;
+            _health.OnDead += OnBarrierDestroyed;
         }
     }
 
     private void OnDisable()
     {
         if (_health != null)
-            _health.OnDead -= OnDeath;
+            _health.OnDead -= OnBarrierDestroyed;
     }
 
 
-    private void OnDeath()
+    private void OnBarrierDestroyed()
     {
-        Destroy(this.gameObject, 0.2f);
+        _barrierRoutine  = StartCoroutine(BarrierRoutine());   
+    }
+
+    IEnumerator BarrierRoutine()
+    {
+        yield return null;
+        foreach (MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.enabled = false;
+        }
+
+        GetComponent<BoxCollider>().enabled = false;
+        yield return new WaitForSeconds(Random.Range(2f, 6f));
+        foreach (MeshRenderer renderer in GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.enabled = true;
+        }
+        GetComponent<BoxCollider>().enabled = true;
+        
+        _barrierRoutine = null;
     }
 
 

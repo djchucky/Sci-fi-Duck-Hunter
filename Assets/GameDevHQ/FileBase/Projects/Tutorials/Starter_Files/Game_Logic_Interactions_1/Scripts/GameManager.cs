@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,15 @@ public class GameManager : MonoBehaviour
 
     private int _currentScore;
     private int _damageReceived;
+    private bool _isGameOver;
+    public static Action OnGameOver;
+
+    public bool IsGameOver
+    {
+        get { return _isGameOver; }
+    }
+    [SerializeField]
+    private int _maxDamage = 5;
 
 
     private void Awake()
@@ -29,6 +39,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _currentScore = 0;
+        UIManager.Instance.UpdateDamageUI(_damageReceived, _maxDamage);
     }
 
     public int CurrentScore()
@@ -44,10 +55,12 @@ public class GameManager : MonoBehaviour
     public void ReceiveDamage()
     {
         _damageReceived++;
-        Debug.Log($"Current Damage: {_damageReceived}");
-        if(_damageReceived >= 10)
+        UIManager.Instance.UpdateDamageUI(_damageReceived, _maxDamage);
+        if(_damageReceived >= _maxDamage)
         {
             Debug.Log("You lose");
+            _isGameOver = true;
+            OnGameOver?.Invoke();
         }
     }
 }

@@ -26,11 +26,19 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private List<Transform> _hidingWaypoints;
 
+    private void OnEnable()
+    {
+        GameManager.OnGameOver += OnGameOver;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnGameOver -= OnGameOver;
+    }
+
     private void Awake()
     {
-
-        _instance = this;
-        
+        _instance = this;       
     }
 
     void Start()
@@ -42,14 +50,21 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnEnemiesRoutine()
     {
-        yield return null;
-
-        for (int i = 0; i < _enemiesToSpawn; i++)
+        while (!GameManager.Instance.IsGameOver)
         {
-            PoolManager.Instance.RequestEnemy();   
-            yield return new WaitForSeconds(Random.Range(2, 5f));
+            for (int i = 0; i < _enemiesToSpawn; i++)
+            {
+                if(GameManager.Instance.IsGameOver)
+                {
+                    yield break;
+                }
+
+                PoolManager.Instance.RequestEnemy();   
+                yield return new WaitForSeconds(Random.Range(2, 5f));
             
+            }
         }
+        Debug.Log("End Spawn");
         _spawnEnemyRoutine = null;
     }
 
@@ -70,6 +85,16 @@ public class SpawnManager : MonoBehaviour
         if(_enemiesLeft <= 0)
         {
             Debug.Log("You Win!");
+        }
+    }
+
+    private void OnGameOver()
+    {
+        if(_spawnEnemyRoutine != null)
+        {
+            Debug.Log("Stop Spawning");
+            StopCoroutine(_spawnEnemyRoutine);
+            _spawnEnemyRoutine = null;
         }
     }
 }

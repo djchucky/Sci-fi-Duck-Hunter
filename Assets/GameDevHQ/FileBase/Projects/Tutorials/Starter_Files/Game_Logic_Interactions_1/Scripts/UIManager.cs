@@ -24,6 +24,18 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI _scoreText;
     [SerializeField]
     private TextMeshProUGUI _enemiesLeft;
+    [SerializeField]
+    private TextMeshProUGUI _damageReceived;
+
+    private void OnEnable()
+    {
+        GameManager.OnGameOver += OnGameOver;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnGameOver -= OnGameOver;
+    }
 
     private void Awake()
     {
@@ -44,6 +56,17 @@ public class UIManager : MonoBehaviour
     public void UpdateEnemiesLeft(int enemiesLeft)
     {
         _enemiesLeft.text = enemiesLeft.ToString();
+    }
+
+    public void UpdateDamageUI(int currentDamage, int maxDamage)
+    {
+        _damageReceived.text = currentDamage.ToString() + " / " + maxDamage.ToString();
+    }
+
+    private void OnGameOver()
+    {
+        //Activate button restart
+        //Acttivate Game Over screen
     }
 
 }
