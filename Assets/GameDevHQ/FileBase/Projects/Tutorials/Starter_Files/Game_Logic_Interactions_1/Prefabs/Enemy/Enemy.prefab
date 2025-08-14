@@ -498,6 +498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a632900edbdc634eb46590d19de10f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _points: 20
   _aiState: 0
   _hidingWaypoints: []
 --- !u!114 &-8922598846908014627
@@ -524,7 +525,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47a937243f7b94e4aa394e7cca69a7a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 3
+  _health: 2
+  _currentHealth: 0
   _clip: {fileID: 8300000, guid: 9fafd32bfdf664047b459a0b30b1e360, type: 3}
 --- !u!136 &5458711491878556208
 CapsuleCollider:

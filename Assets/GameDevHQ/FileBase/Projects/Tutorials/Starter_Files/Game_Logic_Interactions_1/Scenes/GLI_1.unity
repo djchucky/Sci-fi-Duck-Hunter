@@ -18363,7 +18363,7 @@ MonoBehaviour:
   m_text: '-Objective: Kill all enemies before they reach the door
 
 
-    -3 Hits
+    -2 Hits
     to kill enemy
 
 
@@ -36427,7 +36427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df2af67441b27424d810d28558dbc0d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemiesToSpawn: 20
+  _enemiesToSpawn: 25
   _endPosition: {fileID: 1252502232}
   _enemyPrefab: {fileID: 4342765993157220630, guid: 3a9bc285698f9b14daa23c73c5e926ac, type: 3}
   _hidingWaypoints:
