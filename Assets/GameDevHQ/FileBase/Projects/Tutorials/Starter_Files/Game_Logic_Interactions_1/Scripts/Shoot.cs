@@ -15,6 +15,7 @@ public class Shoot : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private float _fireRate = 0.75f;
+    [SerializeField] private int _damage = 1;
     [SerializeField] private AudioClip _fireClip;
     [SerializeField] private GameObject _light;
 
@@ -83,7 +84,7 @@ public class Shoot : MonoBehaviour
             Health health = _hitInfo.collider.GetComponent<Health>();
             if (health != null)
             {
-                health.Damage();
+                health.Damage(_damage);
             }
         }
     }

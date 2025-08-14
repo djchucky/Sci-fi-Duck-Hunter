@@ -211,7 +211,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _health: 2
-  _clip: {fileID: 8300000, guid: ba0c341ec4af6ce488da5fb5a81e11f6, type: 3}
+  _currentHealth: 0
+  _clip: {fileID: 8300000, guid: 55455dde4e62c114c924f6ef1665073a, type: 3}
 --- !u!1001 &37522499615605537
 PrefabInstance:
   m_ObjectHideFlags: 0

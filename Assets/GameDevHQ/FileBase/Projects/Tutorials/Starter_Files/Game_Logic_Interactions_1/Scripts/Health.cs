@@ -25,9 +25,9 @@ public class Health : MonoBehaviour
         _currentHealth = _health;
     }
 
-    public void Damage()
+    public void Damage(int damageAmount)
     {
-        _currentHealth--;
+        _currentHealth -= damageAmount;
         if(_currentHealth <= 0)
         {
             _source.clip = _clip;
