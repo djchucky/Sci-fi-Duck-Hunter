@@ -6,17 +6,21 @@ public class Shoot : MonoBehaviour
 {
     Ray _ray;
     RaycastHit _hitInfo;
+    private bool _isShooting;
+    private bool _isReloading;
     private float _nextFire;
-    private int _maxAmmo = 15;
     private int _currentAmmo;
     private AudioSource _audioSource;
     private Coroutine _fireRoutine;
     private Coroutine _reloadRoutine;
 
     [Header("Settings")]
+    [SerializeField] private int _maxAmmo = 15;
     [SerializeField] private float _fireRate = 0.75f;
     [SerializeField] private int _damage = 1;
     [SerializeField] private AudioClip _fireClip;
+    [SerializeField] private AudioClip _emptyClip;
+    [SerializeField] private AudioClip _reloadClip;
     [SerializeField] private GameObject _light;
 
     [SerializeField] Camera _camera;
@@ -71,7 +75,15 @@ public class Shoot : MonoBehaviour
 
             else
             {
-                ReloadAmmo();
+                if(!_isShooting && !_isReloading)
+                {
+                    if(!_audioSource.isPlaying)
+                    {
+                        _audioSource.clip = _emptyClip;
+                        _audioSource.Play();
+                    }
+                    Invoke("ReloadAmmo", 0.3f);
+                }
             }
 
         }
@@ -91,23 +103,29 @@ public class Shoot : MonoBehaviour
 
     private void Fire()
     {
+        if(!_isReloading)
         _fireRoutine = StartCoroutine(FireRoutine());
     }
 
     IEnumerator FireRoutine()
     {
-        _audioSource.clip = _fireClip;
-        _audioSource.Play();
+        _isShooting = true;
+        if (!_audioSource.isPlaying)
+        {
+            _audioSource.clip = _fireClip;
+            _audioSource.Play();
+        }
         _light.SetActive(true);
         yield return new WaitForSeconds(0.1f);
         _light.SetActive(false);
+        _isShooting = false;
         _fireRoutine = null;
 
     }
 
     private void ReloadAmmo()
     {
-        if(_reloadRoutine == null && _currentAmmo != _maxAmmo)
+        if(_reloadRoutine == null && _currentAmmo != _maxAmmo && Time.time > _nextFire)
         {
             _reloadRoutine = StartCoroutine(ReloadRoutine());
         }
@@ -115,9 +133,13 @@ public class Shoot : MonoBehaviour
 
     IEnumerator ReloadRoutine()
     {
-        yield return new WaitForSeconds(1.5f);
+        _isReloading = true;
+        _audioSource.clip = _reloadClip;
+        _audioSource.Play();
+        yield return new WaitForSeconds(3.5f);
         _currentAmmo = _maxAmmo;
         UIManager.Instance.UpdateAmmoCount(_currentAmmo);
+        _isReloading = false;
         _reloadRoutine = null;
     }
 

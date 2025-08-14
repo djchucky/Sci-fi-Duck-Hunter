@@ -672,8 +672,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8be8403b40ad3d544998bdb19ad00f4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fireRate: 1
-  _fireClip: {fileID: 8300000, guid: 132be12b2b1b3ce4a9153faaf3647b20, type: 3}
+  _maxAmmo: 7
+  _fireRate: 1.6
+  _damage: 1
+  _fireClip: {fileID: 8300000, guid: e58d6ba82bcd79546b6bc0c04474e2ed, type: 3}
+  _emptyClip: {fileID: 8300000, guid: f63876329d19fd84ea6ee0b21c1d44c0, type: 3}
+  _reloadClip: {fileID: 8300000, guid: c763078adae8ee0478aadb9492e448f2, type: 3}
   _light: {fileID: 3512369116019568945}
   _camera: {fileID: 3518291814107247131}
 --- !u!143 &3559926251135889283
