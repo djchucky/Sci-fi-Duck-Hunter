@@ -525,7 +525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47a937243f7b94e4aa394e7cca69a7a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 2
+  _health: 1
   _currentHealth: 0
   _clip: {fileID: 8300000, guid: 9fafd32bfdf664047b459a0b30b1e360, type: 3}
 --- !u!136 &5458711491878556208

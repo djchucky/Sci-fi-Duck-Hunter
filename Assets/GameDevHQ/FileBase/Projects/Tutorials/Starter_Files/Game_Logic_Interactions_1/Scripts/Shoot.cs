@@ -79,8 +79,7 @@ public class Shoot : MonoBehaviour
                 {
                     if(!_audioSource.isPlaying)
                     {
-                        _audioSource.clip = _emptyClip;
-                        _audioSource.Play();
+                        _audioSource.PlayOneShot(_emptyClip);
                     }
                     Invoke("ReloadAmmo", 0.3f);
                 }
@@ -103,18 +102,14 @@ public class Shoot : MonoBehaviour
 
     private void Fire()
     {
-        if(!_isReloading)
+        if(_fireRoutine == null)
         _fireRoutine = StartCoroutine(FireRoutine());
     }
 
     IEnumerator FireRoutine()
     {
         _isShooting = true;
-        if (!_audioSource.isPlaying)
-        {
-            _audioSource.clip = _fireClip;
-            _audioSource.Play();
-        }
+        _audioSource.PlayOneShot(_fireClip);
         _light.SetActive(true);
         yield return new WaitForSeconds(0.1f);
         _light.SetActive(false);
@@ -134,8 +129,7 @@ public class Shoot : MonoBehaviour
     IEnumerator ReloadRoutine()
     {
         _isReloading = true;
-        _audioSource.clip = _reloadClip;
-        _audioSource.Play();
+        _audioSource.PlayOneShot(_reloadClip);
         yield return new WaitForSeconds(3.5f);
         _currentAmmo = _maxAmmo;
         UIManager.Instance.UpdateAmmoCount(_currentAmmo);
