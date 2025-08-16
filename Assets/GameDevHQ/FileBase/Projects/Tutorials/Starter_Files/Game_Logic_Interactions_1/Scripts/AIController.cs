@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -42,15 +41,14 @@ public class AIController : MonoBehaviour
     private void Initialization()
     {
         _health = GetComponent<Health>();
-        if(_health != null )
-        {
-            _health.OnDead += OnDead;
-        }
+        if (_health != null) _health.OnDead += OnDead;
+
         _isDead = false;
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<AIAnimation>();
         _agent.enabled = true;
         GetComponent<CapsuleCollider>().enabled = true;
+
         _aiState = AIState.Run;
         _currentPoint = 0;
 
@@ -58,17 +56,12 @@ public class AIController : MonoBehaviour
         _lastPosition = transform.position;
         _hidingWaypoints = SpawnManager.Instance.GetHidingWaypoints();
 
-        _agent.Warp(transform.position); //Set position for NavMeshAgent
+        _agent.Warp(transform.position);
         _agent.SetDestination(_hidingWaypoints[_currentPoint].position);
-
-        if (_agent == null)
-        {
-            Debug.LogError("Agent is NULL on ENEMY AI");
-        }
     }
 
     private void Update()
-    {      
+    {
         HandleAnimations();
         HandleStatus();
     }
@@ -77,7 +70,6 @@ public class AIController : MonoBehaviour
     {
         CalculateVelocity();
     }
-
 
     private void HandleAnimations()
     {
@@ -100,14 +92,14 @@ public class AIController : MonoBehaviour
                 break;
 
             case AIState.Hide:
-                if (_isHiding == false && _hidingRoutine == null)
+                if (!_isHiding && _hidingRoutine == null)
                 {
-                    _hidingRoutine = StartCoroutine(HidingRoutine());
+                    // Non parte da qui ma dal waypoint
                 }
                 break;
 
             case AIState.Death:
-                if(!_isDead && _deathRoutine == null)
+                if (!_isDead && _deathRoutine == null)
                 {
                     Death();
                 }
@@ -122,71 +114,63 @@ public class AIController : MonoBehaviour
 
     private void CalculateMovement()
     {
-        if (_isDead || _aiState == AIState.Hide) return;
+        if (_isDead) return;
 
-        // Se il nemico ha raggiunto la destinazione attuale
+        // Se ha raggiunto la destinazione
         if (_agent.remainingDistance < 0.5f && !_agent.pathPending)
         {
-            // Cerca il prossimo waypoint libero
+            // Cerca prossimo waypoint libero
             while (_currentPoint < _hidingWaypoints.Count)
             {
                 Waypoint waypoint = _hidingWaypoints[_currentPoint].GetComponent<Waypoint>();
 
                 if (waypoint != null && waypoint.IsOccupied)
                 {
-                    _currentPoint++;                
+                    _currentPoint++;
                 }
-                else
-                {
-                    break;
-                }
+                else break;
             }
 
-            // Se non ci sono waypoint liberi → scappa
+            // Nessun waypoint disponibile -> fugge
             if (_currentPoint >= _hidingWaypoints.Count)
             {
+                _currentPoint = 0; // reset così può ricontrollare in futuro
                 SetEnemyDestination();
                 _aiState = AIState.Run;
                 return;
             }
 
-            //Controlla il waypoint target
-            Waypoint targetWaypoint = _hidingWaypoints[_currentPoint].GetComponent<Waypoint>();
-
-            if (_aiState != AIState.Hide && targetWaypoint != null && !targetWaypoint.IsOccupied && _agent.remainingDistance < 0.5f)
-            {
-                _aiState = AIState.Hide;
-                return;
-            }
-
+            // Imposta nuova destinazione
             _agent.SetDestination(_hidingWaypoints[_currentPoint].position);
-
-            if (targetWaypoint == null)
-            {
-                _aiState = AIState.Run;
-            }
         }
     }
 
-    private IEnumerator HidingRoutine()
+    // --- Metodo chiamato dal Waypoint quando il nemico entra nel trigger
+    public void EnterHiding(Waypoint wp)
     {
-        _isHiding = true;
-        _agent.isStopped = true;
+        if (_aiState == AIState.Run && !_isDead)
+        {
+            _agent.isStopped = true;
+            _aiState = AIState.Hide;
+            _isHiding = true;
 
+            if (_hidingRoutine == null)
+                _hidingRoutine = StartCoroutine(HidingRoutine(wp));
+        }
+    }
+
+    private IEnumerator HidingRoutine(Waypoint wp)
+    {
         yield return new WaitForSeconds(Random.Range(1.5f, 4f));
 
         _isHiding = false;
         _agent.isStopped = false;
 
-        // Reset destinazione attuale per forzare il NavMeshAgent a calcolare il percorso
+        // Uscito dal nascondiglio
         if (_currentPoint < _hidingWaypoints.Count)
-        {
             _agent.SetDestination(_hidingWaypoints[_currentPoint].position);
-        }
         else
-        {
             SetEnemyDestination();
-        }
 
         _aiState = AIState.Run;
         _hidingRoutine = null;
@@ -196,9 +180,10 @@ public class AIController : MonoBehaviour
     {
         Death();
     }
+
     private void Death()
     {
-        _deathRoutine = StartCoroutine(DeathSequence());   
+        _deathRoutine = StartCoroutine(DeathSequence());
     }
 
     IEnumerator DeathSequence()
@@ -206,15 +191,16 @@ public class AIController : MonoBehaviour
         GameManager.Instance.AddScore(_points);
         UIManager.Instance.UpdateScore();
         SpawnManager.Instance.ReduceEnemyCount();
+
         _isDead = true;
         _agent.isStopped = true;
         _aiState = AIState.Death;
         _animator.DeathAnimation();
         _agent.enabled = false;
         GetComponent<CapsuleCollider>().enabled = false;
+
         yield return new WaitForSeconds(4.5f);
         gameObject.SetActive(false);
         _deathRoutine = null;
     }
-
 }

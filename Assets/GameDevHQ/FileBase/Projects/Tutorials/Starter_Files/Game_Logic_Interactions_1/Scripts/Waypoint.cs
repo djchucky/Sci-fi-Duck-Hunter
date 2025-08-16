@@ -1,38 +1,40 @@
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Waypoint : MonoBehaviour
 {
     private bool _isOccupied;
-    public bool IsOccupied
-    {
-        get {  return _isOccupied; }
-    }
+    public bool IsOccupied => _isOccupied;
 
-    [SerializeField] private List<AIController> _enemies = new List<AIController>();
-
+    private List<AIController> _enemies = new List<AIController>();
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy"))
         {
-            _enemies.Add(other.GetComponent<AIController>());
-            _isOccupied = true;
+            AIController enemy = other.GetComponent<AIController>();
+            if (!_enemies.Contains(enemy))
+            {
+                _enemies.Add(enemy);
+                _isOccupied = true;
+
+                // Segnala al nemico di entrare in stato Hide
+                enemy.EnterHiding(this);
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if(other.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy"))
         {
-            _enemies.Remove(other.GetComponent<AIController>());
+            AIController enemy = other.GetComponent<AIController>();
+            _enemies.Remove(enemy);
             _isOccupied = _enemies.Count > 0;
         }
     }
 
-    public List<AIController> EnemiesReturn() 
+    public List<AIController> EnemiesReturn()
     {
         return _enemies;
     }
